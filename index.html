@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opinie klientów</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f9f8f6;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    color: #1a1a1a;
+  }
+  .app { max-width: 900px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+  .header-title { font-size: 20px; font-weight: 600; color: #111; }
+  .header-sub { font-size: 13px; color: #888; margin-top: 3px; }
+  .add-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 16px; font-size: 13px; font-weight: 500;
+    background: #111; color: #fff; border: none;
+    border-radius: 10px; cursor: pointer; transition: opacity 0.15s;
+  }
+  .add-btn:hover { opacity: 0.85; }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 1.5rem;
+  }
+  .review-card {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 16px;
+    padding: 18px 18px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .review-card:hover { border-color: #d0d0d0; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .card-top { display: flex; align-items: center; gap: 11px; }
+  .avatar-circle {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600; flex-shrink: 0; overflow: hidden;
+  }
+  .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+  .card-meta { flex: 1; min-width: 0; }
+  .card-name { font-size: 14px; font-weight: 600; color: #111; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-title { font-size: 12px; color: #999; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stars { display: flex; gap: 2px; }
+  .star-filled { color: #f5a623; font-size: 16px; }
+  .star-empty { color: #ddd; font-size: 16px; }
+  .card-text { font-size: 13px; color: #555; line-height: 1.6; flex: 1; }
+  .delete-btn {
+    position: absolute; top: 12px; right: 12px;
+    background: none; border: none; cursor: pointer;
+    color: #ccc; font-size: 16px; padding: 4px;
+    border-radius: 6px; opacity: 0; transition: opacity 0.15s, color 0.15s;
+  }
+  .review-card:hover .delete-btn { opacity: 1; }
+  .delete-btn:hover { color: #e24b4a; }
+  .empty-state {
+    text-align: center; padding: 4rem 1rem;
+    border: 1.5px dashed #e0e0e0; border-radius: 16px;
+    color: #bbb; margin-bottom: 1.5rem;
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; }
+  /* Modal */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px;
+    padding: 1.75rem; width: 100%; max-width: 440px;
+    display: flex; flex-direction: column; gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; }
+  .modal-title { font-size: 17px; font-weight: 600; }
+  .close-btn { background: none; border: none; cursor: pointer; color: #aaa; font-size: 22px; line-height: 1; padding: 2px; }
+  .close-btn:hover { color: #333; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.04em; }
+  input[type="text"], textarea {
+    font-family: inherit; font-size: 14px; color: #111;
+    border: 1.5px solid #e8e8e8; border-radius: 10px;
+    padding: 10px 12px; outline: none; transition: border-color 0.15s;
+    background: #fafafa;
+  }
+  input[type="text"]:focus, textarea:focus { border-color: #111; background: #fff; }
+  textarea { resize: vertical; min-height: 90px; }
+  .avatar-row { display: flex; align-items: center; gap: 12px; }
+  .avatar-preview {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 600; flex-shrink: 0; overflow: hidden;
+  }
+  .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .upload-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; font-size: 13px;
+    background: #f3f3f3; border: 1.5px solid #e8e8e8;
+    border-radius: 10px; cursor: pointer; color: #444; transition: background 0.15s;
+  }
+  .upload-btn:hover { background: #eaeaea; }
+  input[type="file"] { display: none; }
+  .star-picker { display: flex; gap: 5px; }
+  .star-btn { font-size: 26px; cursor: pointer; color: #ddd; transition: color 0.1s; background: none; border: none; padding: 0; line-height: 1; }
+  .star-btn.on { color: #f5a623; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .btn-cancel {
+    padding: 9px 16px; font-size: 13px;
+    background: #f3f3f3; border: none; border-radius: 10px;
+    cursor: pointer; color: #666;
+  }
+  .btn-save {
+    padding: 9px 20px; font-size: 13px; font-weight: 600;
+    background: #111; color: #fff; border: none;
+    border-radius: 10px; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-save:hover { opacity: 0.85; }
+  .error { border-color: #e24b4a !important; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="header-title">Opinie klientów</div>
+      <div class="header-sub">UGC Portfolio — recenzje marek</div>
+    </div>
+    <button class="add-btn" onclick="openModal()">
+      <i class="ti ti-plus"></i> Dodaj opinię
+    </button>
+  </div>
+
+  <div class="reviews-grid" id="grid"></div>
+  <div class="empty-state" id="empty" style="display:none;">
+    <div class="empty-icon"><i class="ti ti-message-circle"></i></div>
+    <div class="empty-text">Brak opinii — dodaj pierwszą recenzję</div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nowa opinia</div>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="field">
+      <label>Avatar</label>
+      <div class="avatar-row">
+        <div class="avatar-preview" id="avatarPreview" style="background:#e8f0fb;color:#3b6dd1;">?</div>
+        <label class="upload-btn">
+          <i class="ti ti-upload" style="font-size:15px;"></i> Wgraj zdjęcie
+          <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">
+        </label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Imię i nazwisko klienta</label>
+      <input type="text" id="iName" placeholder="np. Anna Kowalska" oninput="updatePreview()">
+    </div>
+    <div class="field">
+      <label>Marka / rola</label>
+      <input type="text" id="iTitle" placeholder="np. Marka kosmetyczna XYZ">
+    </div>
+    <div class="field">
+      <label>Ocena</label>
+      <div class="star-picker" id="starPicker">
+        <button class="star-btn on" data-v="1" onclick="setStars(1)">★</button>
+        <button class="star-btn on" data-v="2" onclick="setStars(2)">★</button>
+        <button class="star-btn on" data-v="3" onclick="setStars(3)">★</button>
+        <button class="star-btn on" data-v="4" onclick="setStars(4)">★</button>
+        <button class="star-btn on" data-v="5" onclick="setStars(5)">★</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Treść opinii</label>
+      <textarea id="iText" placeholder="Wpisz treść recenzji..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Anuluj</button>
+      <button class="btn-save" onclick="save()">Dodaj opinię</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PALETTES = [
+  {bg:'#e8f0fb',color:'#3b6dd1'},{bg:'#e1f5ee',color:'#0f6e56'},
+  {bg:'#faeeda',color:'#9a6010'},{bg:'#fbeaf0',color:'#993556'},
+  {bg:'#eeedfe',color:'#534ab7'},{bg:'#faece7',color:'#993c1d'},
+  {bg:'#eaf3de',color:'#3b6d11'},{bg:'#e6f1fb',color:'#185fa5'}
+];
+
+let reviews = [
+  {id:1,name:'Karolina Wiśniewska',title:'Marka suplementów NutriPure',stars:5,text:'Magda była mega profesjonalna — skrypt napisała sama, materiał nagrała w 3 dni. Efekt przeszedł nasze oczekiwania. Na pewno wrócimy!',img:null},
+  {id:2,name:'Tomasz Rek',title:'Startup aplikacji mobilnych',stars:5,text:'Świetny kontakt i bardzo naturalne ujęcia. Widać doświadczenie. Polecam każdemu, kto szuka autentycznego UGC.',img:null},
+  {id:3,name:'Agnieszka Nowak',title:'Marka homeware Velio',stars:5,text:'Dostarczyła 6 filmów w 4 dni robocze. Każdy był edytowany zgodnie z trendami. Estetyka dokładnie taka, jakiej szukałyśmy.',img:null}
+];
+let nextId = 4, stars = 5, tempImg = null;
+
+function initials(n){ return n.trim().split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?'; }
+function palette(n){ let h=0;for(const c of n)h=(h+c.charCodeAt(0))%PALETTES.length;return PALETTES[h]; }
+
+function renderCard(r){
+  const p=palette(r.name);
+  const av = r.img
+    ? `<div class="avatar-circle"><img src="${r.img}"></div>`
+    : `<div class="avatar-circle" style="background:${p.bg};color:${p.color};">${initials(r.name)}</div>`;
+  const s = Array.from({length:5},(_,i)=>`<span class="${i<r.stars?'star-filled':'star-empty'}">★</span>`).join('');
+  return `<div class="review-card" id="c${r.id}">
+    <button class="delete-btn" onclick="del(${r.id})"><i class="ti ti-trash"></i></button>
+    <div class="card-top">${av}<div class="card-meta"><div class="card-name">${r.name}</div><div class="card-title">${r.title}</div></div></div>
+    <div class="stars">${s}</div>
+    <div class="card-text">${r.text}</div>
+  </div>`;
+}
+
+function render(){
+  const g=document.getElementById('grid'), e=document.getElementById('empty');
+  if(!reviews.length){g.innerHTML='';e.style.display='block';}
+  else{e.style.display='none';g.innerHTML=reviews.map(renderCard).join('');}
+}
+
+function del(id){ reviews=reviews.filter(r=>r.id!==id); render(); }
+
+function openModal(){
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('iName').value='';
+  document.getElementById('iTitle').value='';
+  document.getElementById('iText').value='';
+  document.getElementById('iName').classList.remove('error');
+  document.getElementById('iText').classList.remove('error');
+  stars=5; setStars(5); tempImg=null;
+  const p=document.getElementById('avatarPreview');
+  p.innerHTML='?'; p.style.background='#e8f0fb'; p.style.color='#3b6dd1';
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+
+function setStars(n){
+  stars=n;
+  document.querySelectorAll('.star-btn').forEach(b=>{ b.classList.toggle('on',+b.dataset.v<=n); });
+}
+
+function updatePreview(){
+  if(tempImg)return;
+  const name=document.getElementById('iName').value.trim();
+  const p=document.getElementById('avatarPreview'), pal=palette(name||'X');
+  p.innerHTML=initials(name)||'?'; p.style.background=pal.bg; p.style.color=pal.color;
+}
+
+function handleUpload(e){
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{ tempImg=ev.target.result; const p=document.getElementById('avatarPreview'); p.innerHTML=`<img src="${tempImg}">`; };
+  r.readAsDataURL(f);
+}
+
+function save(){
+  const name=document.getElementById('iName').value.trim();
+  const title=document.getElementById('iTitle').value.trim();
+  const text=document.getElementById('iText').value.trim();
+  let ok=true;
+  if(!name){document.getElementById('iName').classList.add('error');ok=false;}else document.getElementById('iName').classList.remove('error');
+  if(!text){document.getElementById('iText').classList.add('error');ok=false;}else document.getElementById('iText').classList.remove('error');
+  if(!ok)return;
+  reviews.push({id:nextId++,name,title:title||'Klient',stars,text,img:tempImg});
+  render(); closeModal();
+}
+
+document.getElementById('overlay').addEventListener('click',e=>{ if(e.target===e.currentTarget)closeModal(); });
+render();
+</script>
+</body>
+</html>
