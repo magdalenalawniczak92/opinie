@@ -1,0 +1,17 @@
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+  <div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;">KW</div><div><div style="font-size:14px;font-weight:500;">Karolina Wiśniewska</div><div style="font-size:12px;color:#888;">Marka suplementów NutriPure</div></div></div>
+  <div style="color:#EF9F27;font-size:16px;">★★★★★</div>
+  <div style="font-size:13px;color:#555;line-height:1.55;">Magda była mega profesjonalna — skrypt napisała sama, materiał nagrała w 3 dni. Efekt przeszedł nasze oczekiwania. Na pewno wrócimy!</div>
+</div>
+<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+  <div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;">TR</div><div><div style="font-size:14px;font-weight:500;">Tomasz Rek</div><div style="font-size:12px;color:#888;">Startup aplikacji mobilnych</div></div></div>
+  <div style="color:#EF9F27;font-size:16px;">★★★★★</div>
+  <div style="font-size:13px;color:#555;line-height:1.55;">Świetny kontakt i bardzo naturalne ujęcia. Widać doświadczenie. Polecam każdemu, kto szuka autentycznego UGC.</div>
+</div>
+<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+  <div style="display:flex;align-items:center;gap:10px;"><div style="width:40px;height:40px;border-radius:50%;background:#FAECE7;color:#993C1D;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;">AN</div><div><div style="font-size:14px;font-weight:500;">Agnieszka Nowak</div><div style="font-size:12px;color:#888;">Marka homeware Velio</div></div></div>
+  <div style="color:#EF9F27;font-size:16px;">★★★★★</div>
+  <div style="font-size:13px;color:#555;line-height:1.55;">Dostarczyła 6 filmów w 4 dni robocze. Każdy był edytowany zgodnie z trendami. Estetyka dokładnie taka, jakiej szukałyśmy.</div>
+</div>
+</div>
